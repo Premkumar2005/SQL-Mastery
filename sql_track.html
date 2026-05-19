@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQL Mastery Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0f11; --surface: #18181b; --surface2: #1f1f23;
+      --border: #2a2a30; --border2: #353540;
+      --text: #e8e8ed; --text-muted: #8b8b99; --text-dim: #545462;
+      --accent: #a78bfa; --accent2: #818cf8; --accent3: #38bdf8;
+      --green: #34d399; --amber: #fbbf24; --rose: #fb7185;
+      --teal: #2dd4bf; --radius: 16px; --radius-sm: 10px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+    body::before {
+      content: ''; position: fixed; top: -30vh; left: 50%; transform: translateX(-50%);
+      width: 80vw; height: 60vh;
+      background: radial-gradient(ellipse at center, rgba(167,139,250,0.07) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* STICKY BAR */
+    #sticky-bar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15,15,17,0.85); backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px; display: flex; align-items: center; gap: 16px;
+      transition: box-shadow 0.3s;
+    }
+    #sticky-bar.scrolled { box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+    .bar-label { font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; letter-spacing: 0.04em; text-transform: uppercase; }
+    .bar-track { flex: 1; height: 6px; background: var(--border2); border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3)); border-radius: 99px; transition: width 0.5s cubic-bezier(.4,0,.2,1); width: 0%; }
+    .bar-count { font-size: 14px; font-weight: 600; color: var(--accent); white-space: nowrap; min-width: 60px; text-align: right; }
+    .bar-pct { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+
+    /* HERO */
+    .hero { text-align: center; padding: 72px 24px 48px; position: relative; z-index: 1; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2);
+      padding: 6px 14px; border-radius: 99px; margin-bottom: 24px;
+    }
+    .hero-eyebrow::before { content: '◆'; font-size: 8px; }
+    .hero h1 { font-family: 'Instrument Serif', serif; font-size: clamp(2.6rem,6vw,4.2rem); font-weight: 400; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero p { font-size: 17px; color: var(--text-muted); max-width: 540px; margin: 0 auto 40px; line-height: 1.6; font-weight: 300; }
+    .hero-chips { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .chip { display: inline-flex; align-items: center; gap: 7px; padding: 8px 16px; border-radius: 99px; font-size: 13px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); }
+    .chip .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot-purple { background: var(--accent); }
+    .dot-blue { background: var(--accent3); }
+    .dot-green { background: var(--green); }
+    .dot-amber { background: var(--amber); }
+
+    /* PATTERN CALLOUT */
+    .pattern-callout {
+      background: rgba(167,139,250,0.06); border: 1px solid rgba(167,139,250,0.18);
+      border-radius: var(--radius-sm); padding: 12px 16px; margin: 0 20px 14px;
+      font-size: 13px; color: var(--text-muted); line-height: 1.5;
+    }
+    .pattern-callout strong { color: var(--accent); }
+
+    /* MAIN */
+    .main { max-width: 1040px; margin: 0 auto; padding: 0 20px 80px; position: relative; z-index: 1; }
+    .stages { display: flex; flex-direction: column; gap: 14px; }
+
+    /* STAGE CARDS */
+    details.stage { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s; }
+    details.stage:hover { border-color: var(--border2); }
+    details.stage[open] { border-color: rgba(167,139,250,0.25); box-shadow: 0 0 0 1px rgba(167,139,250,0.08), 0 20px 60px rgba(0,0,0,0.35); }
+
+    summary.stage-header { list-style: none; cursor: pointer; padding: 20px 24px; display: flex; align-items: center; gap: 16px; user-select: none; -webkit-user-select: none; }
+    summary.stage-header::-webkit-details-marker { display: none; }
+
+    .stage-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .stage-meta { flex: 1; min-width: 0; }
+    .stage-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .stage-subtitle { font-size: 13px; color: var(--text-dim); font-weight: 400; }
+
+    .stage-progress-ring { position: relative; width: 36px; height: 36px; }
+    .stage-progress-ring svg { transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: var(--border2); stroke-width: 3; }
+    .ring-fill { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.6s cubic-bezier(.4,0,.2,1); }
+    .ring-count { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-muted); }
+
+    .chevron { width: 20px; height: 20px; color: var(--text-dim); transition: transform 0.3s cubic-bezier(.4,0,.2,1); flex-shrink: 0; }
+    details[open] .chevron { transform: rotate(180deg); }
+
+    .diff-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 99px; flex-shrink: 0; text-transform: uppercase; }
+    .diff-easy { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+    .diff-med { background: rgba(251,191,36,0.12); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+    .diff-hard { background: rgba(251,113,133,0.12); color: var(--rose); border: 1px solid rgba(251,113,133,0.2); }
+
+    /* PROBLEM GRID */
+    .problem-grid { padding: 4px 20px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 8px; animation: gridIn 0.25s ease; }
+    @keyframes gridIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-label { grid-column: 1/-1; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); padding: 8px 4px 4px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+
+    /* PROBLEM CARD */
+    .problem-card { display: flex; align-items: center; gap: 10px; padding: 11px 13px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); transition: all 0.2s ease; cursor: pointer; text-decoration: none; color: inherit; position: relative; }
+    .problem-card:hover { border-color: var(--accent); background: rgba(167,139,250,0.06); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .problem-card.solved { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.04); }
+    .problem-card.solved:hover { border-color: var(--green); background: rgba(52,211,153,0.08); }
+
+    .check-btn { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border2); background: transparent; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; z-index: 2; position: relative; }
+    .problem-card.solved .check-btn { background: var(--green); border-color: var(--green); }
+    .check-icon { width: 12px; height: 12px; stroke: #0f0f11; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; opacity: 0; transition: opacity 0.15s; }
+    .problem-card.solved .check-icon { opacity: 1; }
+
+    .card-info { flex: 1; min-width: 0; }
+    .card-num { font-size: 11px; color: var(--text-dim); font-weight: 500; margin-bottom: 2px; font-variant-numeric: tabular-nums; }
+    .card-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .problem-card.solved .card-title { color: var(--text-muted); text-decoration: line-through; text-decoration-color: rgba(52,211,153,0.4); }
+
+    .source-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; text-transform: uppercase; }
+    .tag-lc { background: rgba(251,191,36,0.12); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+    .tag-dl { background: rgba(56,189,248,0.12); color: var(--accent3); border: 1px solid rgba(56,189,248,0.2); }
+    .tag-hr { background: rgba(52,211,153,0.12); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+
+    .ext-link { width: 14px; height: 14px; color: var(--text-dim); flex-shrink: 0; opacity: 0; transition: opacity 0.2s; }
+    .problem-card:hover .ext-link { opacity: 1; }
+
+    /* THEMES */
+    .theme-violet .stage-icon { background: rgba(167,139,250,0.12); }
+    .theme-blue .stage-icon { background: rgba(56,189,248,0.12); }
+    .theme-green .stage-icon { background: rgba(52,211,153,0.12); }
+    .theme-amber .stage-icon { background: rgba(251,191,36,0.12); }
+    .theme-rose .stage-icon { background: rgba(251,113,133,0.12); }
+    .theme-indigo .stage-icon { background: rgba(129,140,248,0.12); }
+    .theme-teal .stage-icon { background: rgba(45,212,191,0.12); }
+    .theme-orange .stage-icon { background: rgba(249,115,22,0.12); }
+    .theme-pink .stage-icon { background: rgba(236,72,153,0.12); }
+
+    .theme-violet .ring-fill { stroke: var(--accent); }
+    .theme-blue .ring-fill { stroke: var(--accent3); }
+    .theme-green .ring-fill { stroke: var(--green); }
+    .theme-amber .ring-fill { stroke: var(--amber); }
+    .theme-rose .ring-fill { stroke: #fb7185; }
+    .theme-indigo .ring-fill { stroke: var(--accent2); }
+    .theme-teal .ring-fill { stroke: #2dd4bf; }
+    .theme-orange .ring-fill { stroke: #f97316; }
+    .theme-pink .ring-fill { stroke: #ec4899; }
+
+    /* STRATEGY */
+    .strategy { margin-top: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+    .strategy h2 { font-family: 'Instrument Serif', serif; font-size: 1.6rem; font-weight: 400; color: var(--text); margin-bottom: 24px; letter-spacing: -0.02em; }
+    .strategy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .strategy-item { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border); }
+    .strategy-num { width: 28px; height: 28px; border-radius: 8px; background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.2); color: var(--accent); font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .strategy-text { font-size: 14px; color: var(--text-muted); line-height: 1.5; font-weight: 400; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 48px 16px 32px; }
+      summary.stage-header { padding: 16px; gap: 12px; }
+      .problem-grid { padding: 4px 12px 16px; grid-template-columns: 1fr; }
+      .strategy { padding: 20px; }
+      .strategy-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="sticky-bar">
+  <span class="bar-label">Progress</span>
+  <div class="bar-track"><div class="bar-fill" id="bar-fill"></div></div>
+  <span class="bar-count" id="bar-count">0 / 0</span>
+  <span class="bar-pct" id="bar-pct">0%</span>
+</div>
+
+<div class="hero">
+  <div class="hero-eyebrow">Data Engineering Interview Prep</div>
+  <h1>SQL Mastery <em>Roadmap</em></h1>
+  <p>100+ problems across LeetCode, DataLemur & HackerRank — organized by pattern so every problem teaches a skill.</p>
+  <div class="hero-chips">
+    <span class="chip"><span class="dot dot-purple"></span>9 Pattern Stages</span>
+    <span class="chip"><span class="dot dot-blue"></span>LC + DL + HackerRank</span>
+    <span class="chip"><span class="dot dot-green"></span>Progress Tracking</span>
+    <span class="chip"><span class="dot dot-amber"></span>Pattern-First Learning</span>
+  </div>
+</div>
+
+<div class="main">
+<div class="stages" id="stages-container">
+
+<!-- ══════════════════════════════════════════
+     STAGE 1 — SELECT + WHERE + Basic Filtering
+     ══════════════════════════════════════════ -->
+<details class="stage theme-violet" id="stage-1">
+  <summary class="stage-header">
+    <div class="stage-icon">🌱</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 1 — SELECT, WHERE & Basic Filtering</div>
+      <div class="stage-subtitle">Pattern: Read rows, apply conditions, use NULL handling</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="1">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> SELECT columns, filter with WHERE, handle NULL with IS NULL / IS NOT NULL, use AND / OR / IN / BETWEEN / LIKE. The trick: <code>WHERE ref_id != 2</code> misses NULLs — always add <code>OR ref_id IS NULL</code>.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/recyclable-and-low-fat-products/" data-id="lc-1757">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1757')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1757</div><div class="card-title">Recyclable & Low Fat Products</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/find-customer-referee/" data-id="lc-584">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-584')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #584</div><div class="card-title">Find Customer Referee</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/big-countries/" data-id="lc-595">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-595')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #595</div><div class="card-title">Big Countries</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/article-views-i/" data-id="lc-1148">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1148')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1148</div><div class="card-title">Article Views I</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/invalid-tweets/" data-id="lc-1683">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1683')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1683</div><div class="card-title">Invalid Tweets</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/not-boring-movies/" data-id="lc-620">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-620')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #620</div><div class="card-title">Not Boring Movies</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-page-with-no-likes" data-id="dl-s1-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s1-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Facebook</div><div class="card-title">Pages With No Likes</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/tesla-unfinished-parts" data-id="dl-s1-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s1-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Tesla</div><div class="card-title">Unfinished Parts</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-well-paid-employees" data-id="dl-s1-3">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s1-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">FAANG</div><div class="card-title">Well Paid Employees</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/revising-the-select-query/problem" data-id="hr-s1-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s1-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Basic SELECT</div><div class="card-title">Revising the SELECT Query I</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/weather-observation-station-3/problem" data-id="hr-s1-2">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s1-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">DISTINCT + MOD</div><div class="card-title">Weather Observation Station 3</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 2 — String & Math Functions
+     ══════════════════════════════════════════ -->
+<details class="stage theme-blue" id="stage-2">
+  <summary class="stage-header">
+    <div class="stage-icon">🔤</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 2 — String & Math Functions</div>
+      <div class="stage-subtitle">Pattern: Transform data — UPPER, CONCAT, LENGTH, MOD, ROUND</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="2">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> Use <code>UPPER()</code>, <code>LOWER()</code>, <code>CONCAT()</code>, <code>LENGTH()</code> for string problems. Use <code>MOD()</code>, <code>ROUND()</code>, <code>FLOOR()</code> for math. These appear inside SELECT or WHERE clauses.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/fix-names-in-a-table/" data-id="lc-1667">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1667')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1667</div><div class="card-title">Fix Names in a Table</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/calculate-special-bonus/" data-id="lc-1873">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1873')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1873</div><div class="card-title">Calculate Special Bonus</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/replace-employee-id-with-the-unique-identifier/" data-id="lc-1378">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1378')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1378</div><div class="card-title">Replace Employee ID</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/delete-duplicate-emails/" data-id="lc-196">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-196')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #196</div><div class="card-title">Delete Duplicate Emails</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/name-of-employees/problem" data-id="hr-s2-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s2-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">String</div><div class="card-title">Employee Names</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/the-pads/problem" data-id="hr-s2-2">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s2-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">CONCAT + CASE</div><div class="card-title">The PADS</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 3 — GROUP BY & Aggregation
+     ══════════════════════════════════════════ -->
+<details class="stage theme-green" id="stage-3">
+  <summary class="stage-header">
+    <div class="stage-icon">📊</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 3 — GROUP BY & Aggregation</div>
+      <div class="stage-subtitle">Pattern: COUNT, SUM, AVG, MIN, MAX + HAVING to filter groups</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="3">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> <code>GROUP BY col</code> → collapse rows into groups → apply aggregate (COUNT/SUM/AVG) → filter groups with <code>HAVING</code>. Remember: WHERE filters rows BEFORE grouping; HAVING filters AFTER.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/customer-placing-the-largest-number-of-orders/" data-id="lc-586">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-586')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #586</div><div class="card-title">Customer Placing Largest Number of Orders</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/classes-with-at-least-5-students/" data-id="lc-596">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-596')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #596</div><div class="card-title">Classes With at Least 5 Students</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/find-followers-count/" data-id="lc-1729">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1729')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1729</div><div class="card-title">Find Followers Count</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/daily-leads-and-partners/" data-id="lc-1693">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1693')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1693</div><div class="card-title">Daily Leads and Partners</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/number-of-unique-subjects-taught-by-each-teacher/" data-id="lc-2356">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-2356')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #2356</div><div class="card-title">Unique Subjects Taught by Teacher</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/percentage-of-users-attended-a-contest/" data-id="lc-1633">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1633')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1633</div><div class="card-title">Percentage of Users in Contest</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/queries-quality-and-percentage/" data-id="lc-1211">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1211')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1211</div><div class="card-title">Queries Quality and Percentage</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/count-salary-categories/" data-id="lc-1907">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1907')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1907</div><div class="card-title">Count Salary Categories</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/monthly-transactions-i/" data-id="lc-1193">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1193')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1193</div><div class="card-title">Monthly Transactions I</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/average-selling-price/" data-id="lc-1251">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1251')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1251</div><div class="card-title">Average Selling Price</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-histogram-tweets" data-id="dl-s3-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s3-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Twitter</div><div class="card-title">Histogram of Tweets</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-average-post-hiatus-1" data-id="dl-s3-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s3-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Facebook</div><div class="card-title">Average Post Hiatus (Part 1)</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/duplicate-job-listings" data-id="dl-s3-3">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s3-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LinkedIn</div><div class="card-title">Duplicate Job Listings</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/teams-power-users" data-id="dl-s3-4">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s3-4')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Microsoft</div><div class="card-title">Teams Power Users</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/revising-aggregations-the-count-function/problem" data-id="hr-s3-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s3-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">COUNT</div><div class="card-title">Revising Aggregations — The Count Function</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/earnings-of-employees/problem" data-id="hr-s3-2">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s3-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">MAX + computed col</div><div class="card-title">Top Earners</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 4 — JOINs
+     ══════════════════════════════════════════ -->
+<details class="stage theme-amber" id="stage-4">
+  <summary class="stage-header">
+    <div class="stage-icon">🔗</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 4 — JOINs</div>
+      <div class="stage-subtitle">Pattern: INNER, LEFT, SELF JOIN — combining multiple tables</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="4">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> <code>LEFT JOIN</code> keeps all rows from left table (NULL where no match — great for "not in" logic). <code>INNER JOIN</code> keeps only matches. <code>SELF JOIN</code> joins a table to itself (e.g. manager-employee). Master this stage — it's 60% of interviews.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/product-sales-analysis-i/" data-id="lc-1068">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1068')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1068</div><div class="card-title">Product Sales Analysis I</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/employee-bonus/" data-id="lc-577">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-577')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #577</div><div class="card-title">Employee Bonus</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/students-and-examinations/" data-id="lc-1280">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1280')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1280</div><div class="card-title">Students and Examinations</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/customer-who-visited-but-did-not-make-any-transactions/" data-id="lc-1581">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1581')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1581</div><div class="card-title">Visited Without Transactions</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/managers-with-at-least-5-direct-reports/" data-id="lc-570">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-570')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #570</div><div class="card-title">Managers with ≥ 5 Direct Reports</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/employees-whose-manager-left-the-company/" data-id="lc-1978">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1978')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1978</div><div class="card-title">Employees Whose Manager Left</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/sales-person/" data-id="lc-607">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-607')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #607</div><div class="card-title">Sales Person</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/customers-who-never-order/" data-id="lc-183">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-183')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #183</div><div class="card-title">Customers Who Never Order</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/employees-earning-more-than-their-managers/" data-id="lc-181">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-181')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #181</div><div class="card-title">Employees Earning More Than Managers</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/market-analysis-i/" data-id="lc-1158">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1158')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1158</div><div class="card-title">Market Analysis I</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/average-time-of-process-per-machine/" data-id="lc-1661">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1661')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1661</div><div class="card-title">Average Time of Process per Machine</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/completed-trades" data-id="dl-s4-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s4-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Robinhood</div><div class="card-title">Cities With Completed Trades</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/matching-skills" data-id="dl-s4-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s4-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LinkedIn</div><div class="card-title">Data Science Skills</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/highest-grossing-items" data-id="dl-s4-3">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s4-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Amazon</div><div class="card-title">Highest-Grossing Items</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/asian-population/problem" data-id="hr-s4-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s4-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">INNER JOIN</div><div class="card-title">Asian Population</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/the-report/problem" data-id="hr-s4-2">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s4-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">JOIN + ORDER</div><div class="card-title">The Report</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/full-score/problem" data-id="hr-s4-3">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s4-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Multi-JOIN</div><div class="card-title">Full Score</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 5 — CASE WHEN + Conditional Logic
+     ══════════════════════════════════════════ -->
+<details class="stage theme-rose" id="stage-5">
+  <summary class="stage-header">
+    <div class="stage-icon">🔀</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 5 — CASE WHEN & Conditional Logic</div>
+      <div class="stage-subtitle">Pattern: IF/ELSE inside SQL — pivoting, categorizing, conditional counts</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="5">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> <code>CASE WHEN condition THEN val ELSE val END</code>. Use inside SELECT, SUM, COUNT. Conditional aggregation: <code>SUM(CASE WHEN status='approved' THEN 1 ELSE 0 END)</code> counts approved rows. Pivoting = rotating rows to columns using CASE.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/triangle-judgement/" data-id="lc-610">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-610')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #610</div><div class="card-title">Triangle Judgement</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/swap-sex/" data-id="lc-627">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-627')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #627</div><div class="card-title">Swap Sex</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/primary-department-for-each-employee/" data-id="lc-1789">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1789')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1789</div><div class="card-title">Primary Department for Employee</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/reformat-department-table/" data-id="lc-1179">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1179')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1179</div><div class="card-title">Reformat Department Table (Pivot)</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/capital-gainloss/" data-id="lc-1393">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1393')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1393</div><div class="card-title">Capital Gain/Loss</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/confirmation-rate/" data-id="lc-1934">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1934')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1934</div><div class="card-title">Confirmation Rate</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/laptop-mobile-viewership" data-id="dl-s5-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s5-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">NY Times</div><div class="card-title">Laptop vs. Mobile Viewership</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/odd-even-measurements" data-id="dl-s5-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s5-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Google</div><div class="card-title">Odd and Even Measurements</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/what-type-of-triangle/problem" data-id="hr-s5-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s5-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">CASE WHEN</div><div class="card-title">Type of Triangle</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 6 — Subqueries & CTEs
+     ══════════════════════════════════════════ -->
+<details class="stage theme-indigo" id="stage-6">
+  <summary class="stage-header">
+    <div class="stage-icon">🧩</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 6 — Subqueries & CTEs</div>
+      <div class="stage-subtitle">Pattern: Nested queries, EXISTS/IN, WITH clause for readability</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="6">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> Subquery in WHERE: <code>WHERE id NOT IN (SELECT ...)</code>. CTE: <code>WITH cte AS (SELECT ...) SELECT * FROM cte</code>. Use CTEs to break complex problems into named steps. Correlated subquery runs once per row — use carefully for "find latest per group" problems.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/duplicate-emails/" data-id="lc-182">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-182')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #182</div><div class="card-title">Duplicate Emails</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/biggest-single-number/" data-id="lc-619">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-619')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #619</div><div class="card-title">Biggest Single Number</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/customers-who-bought-all-products/" data-id="lc-1045">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1045')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1045</div><div class="card-title">Customers Who Bought All Products</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/product-price-at-a-given-date/" data-id="lc-1164">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1164')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1164</div><div class="card-title">Product Price at a Given Date</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/sales-analysis-iii/" data-id="lc-1084">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1084')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1084</div><div class="card-title">Sales Analysis III</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/second-highest-salary/" data-id="lc-176">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-176')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #176</div><div class="card-title">Second Highest Salary</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/nth-highest-salary/" data-id="lc-177">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-177')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #177</div><div class="card-title">Nth Highest Salary</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/signup-confirmation-rate" data-id="dl-s6-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s6-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">TikTok</div><div class="card-title">Signup Confirmation Rate</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/supercloud-customer" data-id="dl-s6-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s6-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Microsoft</div><div class="card-title">Supercloud Customer</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-customers-bought-product-a-and-b" data-id="dl-s6-3">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s6-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Amazon</div><div class="card-title">Customers Bought All Products</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/salary-of-employees/problem" data-id="hr-s6-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s6-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Subquery</div><div class="card-title">Employee Salaries</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/interviews/problem" data-id="hr-s6-2">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s6-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Multi-CTE</div><div class="card-title">Interviews</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 7 — Window Functions
+     ══════════════════════════════════════════ -->
+<details class="stage theme-teal" id="stage-7">
+  <summary class="stage-header">
+    <div class="stage-icon">🪟</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 7 — Window Functions</div>
+      <div class="stage-subtitle">Pattern: RANK, ROW_NUMBER, LAG/LEAD, SUM OVER — analytics without collapsing rows</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="7">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> <code>RANK() OVER (PARTITION BY dept ORDER BY salary DESC)</code>. Key functions: RANK (gaps), DENSE_RANK (no gaps), ROW_NUMBER (unique), LAG/LEAD (prev/next row), SUM OVER (running total). Wrap in CTE then filter: <code>WHERE rn = 1</code>.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/rank-scores/" data-id="lc-178">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-178')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #178</div><div class="card-title">Rank Scores</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/department-highest-salary/" data-id="lc-184">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-184')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #184</div><div class="card-title">Department Highest Salary</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/department-top-three-salaries/" data-id="lc-185">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-185')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #185</div><div class="card-title">Department Top Three Salaries</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/restaurant-growth/" data-id="lc-1321">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1321')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1321</div><div class="card-title">Restaurant Growth (Rolling 7-day)</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/friend-requests-ii-who-has-the-most-friends/" data-id="lc-602">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-602')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #602</div><div class="card-title">Friend Requests II: Most Friends</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/last-person-to-fit-in-the-bus/" data-id="lc-1204">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1204')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1204</div><div class="card-title">Last Person to Fit in the Bus</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-top-fans-rank" data-id="dl-s7-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s7-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Spotify</div><div class="card-title">Top 5 Artists</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/rolling-average-weekly" data-id="dl-s7-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s7-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Microsoft</div><div class="card-title">Rolling Average Weekly</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-third-transaction" data-id="dl-s7-3">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s7-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Uber</div><div class="card-title">User's Third Transaction</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/photoshop-revenue-growth" data-id="dl-s7-4">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s7-4')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Adobe</div><div class="card-title">Photoshop Revenue Growth</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/median-search-freq" data-id="dl-s7-5">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s7-5')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Google</div><div class="card-title">Median Google Search Frequency</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-cumulative-distribution-of-salary" data-id="dl-s7-6">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s7-6')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">FAANG</div><div class="card-title">Salary Cumulative Distribution</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/occupations/problem" data-id="hr-s7-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s7-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">ROW_NUMBER pivot</div><div class="card-title">Occupations</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 8 — Date & Time Functions
+     ══════════════════════════════════════════ -->
+<details class="stage theme-orange" id="stage-8">
+  <summary class="stage-header">
+    <div class="stage-icon">📅</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 8 — Date & Time Functions</div>
+      <div class="stage-subtitle">Pattern: DATEDIFF, DATE_TRUNC, self-join on dates, time series analysis</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="8">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> <code>DATEDIFF(d2, d1)</code> or <code>d2 - d1</code> for day gaps. <code>DATE_TRUNC('month', date)</code> for monthly grouping. For "next day" comparisons, self-join on date +/- interval or use LAG/LEAD. Know: YEAR(), MONTH(), DAY(), EXTRACT().</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/rising-temperature/" data-id="lc-197">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-197')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #197</div><div class="card-title">Rising Temperature</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/game-play-analysis-i/" data-id="lc-511">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-511')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #511</div><div class="card-title">Game Play Analysis I</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/game-play-analysis-iv/" data-id="lc-550">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-550')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #550</div><div class="card-title">Game Play Analysis IV</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/user-activity-for-the-past-30-days-i/" data-id="lc-1141">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1141')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1141</div><div class="card-title">User Activity for Past 30 Days</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/immediate-food-delivery-ii/" data-id="lc-1174">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1174')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1174</div><div class="card-title">Immediate Food Delivery II</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/list-the-products-ordered-in-a-period/" data-id="lc-1327">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1327')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1327</div><div class="card-title">Products Ordered in a Period</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/the-latest-login-in-2020/" data-id="lc-1890">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1890')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1890</div><div class="card-title">The Latest Login in 2020</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/find-total-time-spent-by-each-employee/" data-id="lc-1741">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-1741')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #1741</div><div class="card-title">Total Time Spent by Employee</div></div>
+      <span class="diff-badge diff-easy">Easy</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-average-post-hiatus-2" data-id="dl-s8-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s8-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Facebook</div><div class="card-title">Average Post Hiatus (Part 2)</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/monthly-merchant-balance" data-id="dl-s8-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s8-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Stripe</div><div class="card-title">Monthly Merchant Balance</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+<!-- ══════════════════════════════════════════
+     STAGE 9 — Hard / Mixed Patterns
+     ══════════════════════════════════════════ -->
+<details class="stage theme-pink" id="stage-9">
+  <summary class="stage-header">
+    <div class="stage-icon">🏆</div>
+    <div class="stage-meta">
+      <div class="stage-title">Stage 9 — Hard / Mixed Patterns</div>
+      <div class="stage-subtitle">Combine everything: retention, gaps, purchase patterns, advanced analytics</div>
+    </div>
+    <div class="stage-progress-ring" data-stage="9">
+      <svg width="36" height="36" viewBox="0 0 36 36"><circle class="ring-bg" cx="18" cy="18" r="15"/><circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.25" stroke-dashoffset="94.25"/></svg>
+      <div class="ring-count">0/0</div>
+    </div>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="problem-grid">
+    <div class="pattern-callout" style="grid-column:1/-1"><strong>Pattern:</strong> These require chaining multiple techniques. Approach: (1) identify what each part needs, (2) write CTEs for each part, (3) join them. Retention = users active in month M AND M+1. Gaps = LAG to find prev date, subtract. Pairs = self-join with a &lt; b to avoid duplicates.</div>
+    <div class="section-label">🟡 LeetCode</div>
+
+    <div class="problem-card" data-url="https://leetcode.com/problems/find-followers-count/" data-id="lc-find-1">
+      <button class="check-btn" onclick="toggleSolved(event,'lc-find-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">LC #602</div><div class="card-title">Friend Requests II — Most Friends</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-lc">LC</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🔵 DataLemur</div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/sql-session-user-activity" data-id="dl-s9-1">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s9-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Facebook</div><div class="card-title">Active User Retention</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/purchasing-activity" data-id="dl-s9-2">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s9-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Amazon</div><div class="card-title">Purchasing Activity</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/non-profitable-drugs" data-id="dl-s9-3">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s9-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">CVS Health</div><div class="card-title">Non-Profitable Drugs</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://datalemur.com/questions/frequently-purchased-pairs" data-id="dl-s9-4">
+      <button class="check-btn" onclick="toggleSolved(event,'dl-s9-4')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Amazon</div><div class="card-title">Frequently Purchased Pairs</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-dl">DL</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="section-label">🟢 HackerRank</div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/sql-projects/problem" data-id="hr-s9-1">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s9-1')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Gaps & Islands</div><div class="card-title">SQL Projects</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/placements/problem" data-id="hr-s9-2">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s9-2')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Multi-JOIN</div><div class="card-title">Placements</div></div>
+      <span class="diff-badge diff-med">Med</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+
+    <div class="problem-card" data-url="https://www.hackerrank.com/challenges/symmetric-pairs/problem" data-id="hr-s9-3">
+      <button class="check-btn" onclick="toggleSolved(event,'hr-s9-3')"><svg class="check-icon" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></button>
+      <div class="card-info"><div class="card-num">Self JOIN</div><div class="card-title">Symmetric Pairs</div></div>
+      <span class="diff-badge diff-hard">Hard</span><span class="source-tag tag-hr">HR</span>
+      <svg class="ext-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+    </div>
+  </div>
+</details>
+
+</div>
+
+<!-- STRATEGY -->
+<div class="strategy">
+  <h2>Pattern-First Solving Strategy</h2>
+  <div class="strategy-grid">
+    <div class="strategy-item"><div class="strategy-num">1</div><div class="strategy-text">Before coding, identify the pattern: filter? aggregate? join? window? This alone cuts solve time in half.</div></div>
+    <div class="strategy-item"><div class="strategy-num">2</div><div class="strategy-text">Stage 4 (JOINs) + Stage 7 (Windows) appear in 80% of interviews. Spend 2× more time here.</div></div>
+    <div class="strategy-item"><div class="strategy-num">3</div><div class="strategy-text">Write CTEs for any query with 2+ logical steps. Readable SQL = fewer interview mistakes.</div></div>
+    <div class="strategy-item"><div class="strategy-num">4</div><div class="strategy-text">HackerRank problems are great for syntax drilling. DataLemur problems mirror real interview questions best.</div></div>
+    <div class="strategy-item"><div class="strategy-num">5</div><div class="strategy-text">After solving, look up the editorial. Often there's a smarter pattern you didn't consider.</div></div>
+    <div class="strategy-item"><div class="strategy-num">6</div><div class="strategy-text">Solve 1 problem daily minimum. Consistency beats marathon sessions — patterns stick through repetition.</div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'sql-roadmap-solved-v2';
+  function loadSolved() {
+    try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); }
+    catch { return new Set(); }
+  }
+  function saveSolved(s) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...s])); } catch {}
+  }
+
+  let solved = loadSolved();
+
+  function toggleSolved(e, id) {
+    e.stopPropagation();
+    const card = e.currentTarget.closest('.problem-card');
+    if (solved.has(id)) { solved.delete(id); card.classList.remove('solved'); }
+    else { solved.add(id); card.classList.add('solved'); }
+    saveSolved(solved);
+    updateProgress();
+  }
+
+  document.querySelectorAll('.problem-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('.check-btn')) return;
+      const url = card.dataset.url;
+      if (url) window.open(url, '_blank');
+    });
+    if (solved.has(card.dataset.id)) card.classList.add('solved');
+  });
+
+  function updateProgress() {
+    const allCards = document.querySelectorAll('.problem-card');
+    const total = allCards.length;
+    const done = [...allCards].filter(c => solved.has(c.dataset.id)).length;
+    const pct = total > 0 ? Math.round(done / total * 100) : 0;
+    document.getElementById('bar-fill').style.width = pct + '%';
+    document.getElementById('bar-count').textContent = done + ' / ' + total;
+    document.getElementById('bar-pct').textContent = pct + '%';
+
+    for (let s = 1; s <= 9; s++) {
+      const ring = document.querySelector('[data-stage="' + s + '"]');
+      if (!ring) continue;
+      const stageCards = document.querySelectorAll('#stage-' + s + ' .problem-card');
+      const stageTotal = stageCards.length;
+      const stageDone = [...stageCards].filter(c => solved.has(c.dataset.id)).length;
+      const stagePct = stageTotal > 0 ? stageDone / stageTotal : 0;
+      ring.querySelector('.ring-fill').style.strokeDashoffset = 94.25 - (stagePct * 94.25);
+      ring.querySelector('.ring-count').textContent = stageDone + '/' + stageTotal;
+    }
+  }
+
+  const stickyBar = document.getElementById('sticky-bar');
+  window.addEventListener('scroll', () => {
+    stickyBar.classList.toggle('scrolled', window.scrollY > 10);
+  }, { passive: true });
+
+  updateProgress();
+</script>
+</body>
+</html>
